@@ -58,6 +58,66 @@ class _AddPageState extends State<AddPage> {
     }
   }
 
+  // 🔥 BOTTOM SHEET
+  void showScanOptions() {
+    showModalBottomSheet(
+      context: context,
+
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(20),
+
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+
+              const Text(
+                "Pilih Metode Scan",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text("Scan Kamera"),
+
+                onTap: () {
+                  Navigator.pop(context);
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const ScanPage(),
+                    ),
+                  );
+                },
+              ),
+
+              ListTile(
+                leading: const Icon(Icons.photo),
+                title: const Text("Upload Gallery"),
+
+                onTap: () {
+                  Navigator.pop(context);
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Fitur upload gallery"),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,6 +149,7 @@ class _AddPageState extends State<AddPage> {
               // 🔥 DROPDOWN
               DropdownButtonFormField<String>(
                 value: selectedKategori,
+
                 items: ["Makanan", "Transport", "Belanja", "Lainnya"]
                     .map(
                       (item) => DropdownMenuItem(
@@ -158,21 +219,13 @@ class _AddPageState extends State<AddPage> {
 
               const SizedBox(height: 20),
 
-              // 🔥 BUTTON SCAN
+              // 🔥 BUTTON SCAN + BOTTOM SHEET
               SizedBox(
                 width: double.infinity,
                 height: 50,
 
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const ScanPage(),
-                      ),
-                    );
-                  },
-
+                  onPressed: showScanOptions,
                   child: const Text("Scan Struk"),
                 ),
               ),
@@ -197,6 +250,7 @@ class _AddPageState extends State<AddPage> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
+
                       child: const Text("Kembali"),
                     ),
                   ),

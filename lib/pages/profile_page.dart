@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'edit_profile_page.dart';
+import '../data/user_data.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -9,8 +10,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
-  // 🔥 SWITCH NOTIFIKASI
   bool isNotifOn = true;
 
   @override
@@ -22,7 +21,6 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
             const CircleAvatar(
               radius: 50,
               child: Icon(
@@ -33,9 +31,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
             const SizedBox(height: 20),
 
-            const Text(
-              "User RupiahKu",
-              style: TextStyle(
+            Text(
+              UserData.nama.isEmpty
+                  ? "User RupiahKu"
+                  : UserData.nama,
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
@@ -43,9 +43,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
             const SizedBox(height: 5),
 
-            const Text(
-              "user@email.com",
-              style: TextStyle(
+            Text(
+              UserData.email.isEmpty
+                  ? "user@email.com"
+                  : UserData.email,
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.grey,
               ),
@@ -53,7 +55,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
             const SizedBox(height: 25),
 
-            // 🔥 SWITCH NOTIFIKASI
             SwitchListTile(
               title: const Text("Notifikasi"),
               value: isNotifOn,
@@ -69,17 +70,17 @@ class _ProfilePageState extends State<ProfilePage> {
             SizedBox(
               width: double.infinity,
               height: 50,
-
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
+                onPressed: () async {
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => const EditProfilePage(),
                     ),
                   );
-                },
 
+                  setState(() {});
+                },
                 child: const Text("Edit Profile"),
               ),
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../data/user_data.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -15,22 +16,46 @@ class _RegisterPageState extends State<RegisterPage> {
 
   String info = "";
 
-  // 🔥 TAMBAHAN
   String gender = "Laki-laki";
   bool setuju = false;
 
   void register() {
-    setState(() {
-      if (!setuju) {
-        info = "Harus setuju syarat!";
-      } else if (passwordController.text != confirmController.text) {
-        info = "Password tidak sama!";
-      } else {
-        info = "Register berhasil: ${namaController.text} ($gender)";
-      }
-    });
+    if (namaController.text.isEmpty ||
+        emailController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        confirmController.text.isEmpty) {
+      setState(() {
+        info = "Semua data harus diisi";
+      });
+      return;
+    }
 
-    Future.delayed(const Duration(seconds: 1), () {
+    if (!setuju) {
+      setState(() {
+        info = "Harus setuju syarat & ketentuan!";
+      });
+      return;
+    }
+
+    if (passwordController.text != confirmController.text) {
+      setState(() {
+        info = "Password tidak sama!";
+      });
+      return;
+    }
+
+    UserData.nama = namaController.text;
+    UserData.email = emailController.text;
+    UserData.password = passwordController.text;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Register berhasil"),
+        backgroundColor: Colors.green,
+      ),
+    );
+
+    Future.delayed(const Duration(milliseconds: 500), () {
       Navigator.pop(context);
     });
   }
@@ -38,29 +63,46 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Register")),
+      appBar: AppBar(
+        title: const Text("Register"),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: SingleChildScrollView(
           child: Column(
             children: [
+              buildInput(
+                "Nama Lengkap",
+                controller: namaController,
+              ),
 
-              buildInput("Nama Lengkap", controller: namaController),
               const SizedBox(height: 15),
 
-              buildInput("Email", controller: emailController),
+              buildInput(
+                "Email",
+                controller: emailController,
+              ),
+
               const SizedBox(height: 15),
 
-              buildInput("Password",
-                  controller: passwordController, isPassword: true),
+              buildInput(
+                "Password",
+                controller: passwordController,
+                isPassword: true,
+              ),
+
               const SizedBox(height: 15),
 
-              buildInput("Konfirmasi Password",
-                  controller: confirmController, isPassword: true),
+              buildInput(
+                "Konfirmasi Password",
+                controller: confirmController,
+                isPassword: true,
+              ),
 
               const SizedBox(height: 20),
 
-              // 🔥 RADIO BUTTON
               Row(
                 children: [
                   Expanded(
@@ -75,6 +117,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       },
                     ),
                   ),
+
                   Expanded(
                     child: RadioListTile(
                       title: const Text("Perempuan"),
@@ -90,9 +133,10 @@ class _RegisterPageState extends State<RegisterPage> {
                 ],
               ),
 
-              // 🔥 CHECKBOX
               CheckboxListTile(
-                title: const Text("Saya setuju dengan syarat & ketentuan"),
+                title: const Text(
+                  "Saya setuju dengan syarat & ketentuan",
+                ),
                 value: setuju,
                 onChanged: (value) {
                   setState(() {
@@ -118,12 +162,22 @@ class _RegisterPageState extends State<RegisterPage> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text("Sudah punya akun? Login"),
+                child: const Text(
+                  "Sudah punya akun? Login",
+                ),
               ),
 
-              const SizedBox(height: 15),
-
-              Text(info),
+              if (info.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 15),
+                  child: Text(
+                    info,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
@@ -131,8 +185,11 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget buildInput(String label,
-      {required TextEditingController controller, bool isPassword = false}) {
+  Widget buildInput(
+    String label, {
+    required TextEditingController controller,
+    bool isPassword = false,
+  }) {
     return TextField(
       controller: controller,
       obscureText: isPassword,
